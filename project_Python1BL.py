@@ -19,6 +19,10 @@ class Zawodnik:
             print("Błąd: Nie można wyświetlić danych")
             
 class OrganizatorImp(Zawodnik):
+    def __init__(self):
+        self.conn=pymysql.connect("localhost" ,"root", "bartez79", "imprezy_nowa_2")
+        print("polaczono ok")
+        self.cursor =self.conn.cursor()    
     def org(self):
         self.sql = "SELECT * FROM org "    
         try:
@@ -33,6 +37,7 @@ class OrganizatorImp(Zawodnik):
             print("Błąd: Nie można wyświetlić danych")
     
     def sezon(self):
+        
             self.sql = "Select * FROM sezon2017"
             try:
                 self.cursor.execute(sql)
@@ -47,17 +52,27 @@ class OrganizatorImp(Zawodnik):
                 print("Błąd: Nie można wyświetlić danych")		
 
     def sezonInsert(self):
-        id_uczestnik = {}
-        self.sql= "Select id_uczestnik , imie , nazwisko from zawodnik;"
+        self.id_uczestnik = input ("Podaj id uczestnika")
+        self.id_imprezy= input("Podaj Numer Imprezy")
+        self.sql= "insert into Sezon2017 (id_uczestnik,id_imprezy) values("  + self.id_uczestnik  + ", " + self.id_imprezy +");"
+        self.cursor.execute("SET foreign_key_checks = 0;")
         self.cursor.execute(self.sql)
         self.results = self.cursor.fetchall()
-        print(self.results)
+        self.conn.commit()
+       
         
-        print('.. tu implementacja insertów')
-    
+           
     def sezonUpdate(self):
+        self.id_sezon = input ("Podaj id Sezonu")
+        self.id_organizator= input ("Podaj id organizatora ")
+        self.id_imprezy= input("Podaj Numer Imprezy")
+        self.sql= "update Sezon2017 set id_uczestnik =" + self.id_organizator + ", id_imprezy=" + self.id_imprezy + " where id_sezon =" + self.id_sezon + ";"
+        self.cursor.execute("SET foreign_key_checks = 0;")
+        self.cursor.execute(self.sql)
+        self.results = self.cursor.fetchall()
+        self.conn.commit()
         
-        print('Jako organizator możesz wprowadzać zmiany')
+    
         
 class Logowanie(OrganizatorImp):
     def __init__(self):
@@ -79,8 +94,6 @@ class Logowanie(OrganizatorImp):
             print("Blad logowania")
             #Logowanie.zapytanie1(self)        
 
-o1= Logowanie()
-o1.sezonInsert()
-o1.zawodnik()
-o1.org()
-o1.sezon()
+o1= OrganizatorImp()
+o1.sezonUpdate()
+
